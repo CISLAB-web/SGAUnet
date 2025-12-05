@@ -49,4 +49,3 @@ A formal citation entry will be provided once the manuscript is accepted.
 For questions or collaboration requests, please contact:
 📧 [chuxin@dankook.ac.kr](mailto:chuxin@dankook.ac.kr)
 
----
