@@ -1,5 +1,5 @@
 ## Structural guidance enhances attention networks for multi-dimensional facial skin quality assessment
-<img width="1626" height="1006" alt="image" src="https://github.com/user-attachments/assets/c962b36e-3a88-42ff-b5ff-efe9d4290caf" />
+<img width="823" height="503" alt="image" src="https://github.com/user-attachments/assets/c962b36e-3a88-42ff-b5ff-efe9d4290caf" />
 
 
 Code and Data Availability
