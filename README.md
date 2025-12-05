@@ -54,9 +54,6 @@ A formal citation entry will be provided once the manuscript is accepted.
 ## 📬 Contact
 
 For questions or collaboration requests, please contact:
-
-**Xin Chu**
-Department of Artificial Intelligence, Dankook University
 📧 [chuxin@dankook.ac.kr](mailto:chuxin@dankook.ac.kr)
 
 ---
