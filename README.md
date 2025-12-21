@@ -7,9 +7,13 @@ The proposed framework integrates structural cues—pore and wrinkle features—
 
 ## 🔔 Code and Data Availability
 
-The **source code**, **pre-trained models**, and **dataset-related resources** will be made publicly available **after the peer-review process is completed**.
+The **source code**, **pre-trained models** will be made publicly available **after the peer-review process is completed**.
 
 We appreciate your patience and support.
+
+The dataset download:
+FaceSkin-Q : [Link](https://drive.google.com/file/d/1Kt3tkw1-Iith-KgEy5da14mp_oYQT_ba/view?usp=sharing)
+NIA : [Link]()
 
 
 ## 📄 Project Overview *(to be updated upon release)*
