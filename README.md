@@ -13,9 +13,8 @@ We appreciate your patience and support.
 
 ### The dataset download   
 
-* FaceSkin-Q : [Link](https://drive.google.com/file/d/1Kt3tkw1-Iith-KgEy5da14mp_oYQT_ba/view?usp=sharing)  
-
-* NIA : [Link](https://drive.google.com/file/d/1x-4Vfy0ZTen-tWIpAkJEMwR-6tyhrhri/view?usp=drive_link)
+* FaceSkin-Q : [Link](https://drive.google.com/file/d/1Kt3tkw1-Iith-KgEy5da14mp_oYQT_ba/view?usp=sharing)  Decompression password: skinqskinq
+* NIA : [Link](https://drive.google.com/file/d/1x-4Vfy0ZTen-tWIpAkJEMwR-6tyhrhri/view?usp=drive_link) Decompression password: niania
 
 
 ## 📄 Project Overview *(to be updated upon release)*
