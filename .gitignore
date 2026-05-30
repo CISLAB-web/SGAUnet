@@ -1,0 +1,78 @@
+# =============================================================================
+# SKIN_PAPER — Git 仅跟踪可复现源码（供 GitHub / 审稿仓库使用）
+#
+# 建议上传：
+#   - config/          训练与数据路径配置
+#   - data_load/       数据集加载相关 .py（不含本地 mask/标注数据目录）
+#   - models/          模型结构
+#   - train_*.py       主训练脚本
+#   - utils/           训练辅助（如伪标签监督 pseudo_supervision.py）
+#
+# 不上传：
+#   - paper_result/、results*/、checkpoint、日志、曲线图等实验产物
+#   - 大体积 notebook、预训练权重、IDE 配置、缓存
+#   - data_load 下手工标注 mask 目录与图像/json 数据文件
+# =============================================================================
+
+# --- 实验结果与输出 ---
+paper_result/
+results*/
+result*/
+show_result/
+compare_plots_paper/
+evaluate/
+weight/
+runs/
+AUC/
+*.pth
+*.pt
+*.ckpt
+*.onnx
+metrics.json
+train_log.txt
+
+# --- 图像 / 标注数据（数据路径见 config，不随仓库分发）---
+data_load/skin_q_gt_masks*/
+data_load/**/*.png
+data_load/**/*.jpg
+data_load/**/*.jpeg
+data_load/**/*.bmp
+data_load/**/*.tif
+data_load/**/*.tiff
+data_load/**/*_gt_meta.json
+
+# --- Notebook（体积大、含输出，本地保留即可）---
+*.ipynb
+.ipynb_checkpoints/
+
+# --- Python / 构建缓存 ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# --- IDE / 系统 ---
+.idea/
+.vscode/
+*.swp
+*~
+.DS_Store
+Thumbs.db
+
+# --- 论文作图、杂项脚本（非核心训练链路）---
+Other/
+backbone_val*.py
+anonymize*.py
+segmentation_visualization.py
+model_design.ipynb
+show_dataloader.ipynb
+showResult.ipynb
+
+# --- 可选：若仅开源双头消融，可取消下面两行注释 ---
+# test_Q.py
+# test_nia.py

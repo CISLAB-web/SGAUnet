@@ -1,0 +1,46 @@
+#paths:
+#  json_folder: "/data1/SKIN_Q/03/label"
+#  image_folder: "/data1/SKIN_Q/03/image"
+
+paths:
+  json_folder: "/data_usb/Other_Dataset/SKIN_Q/label"
+  image_folder: "/data_usb/Other_Dataset/SKIN_Q/image"
+
+#  json_folder: "/home/cxx/Code/SKINDATA/SkinData/full_data/label"
+#  image_folder: "/home/cxx/Code/SKINDATA/SkinData/full_data/image"
+
+ids:
+  train: [1,2,3,4,5,6,7,8,9,10]
+  test: [0]
+light_conditions:
+  train: [2]
+  test: [2]
+split_mode: "id"  # "id" 表示按照 "id" 划分，"ratio" 表示按比例划分
+split_ratio: 0.8     # 当 split_mode 为 "ratio" 时生效
+batch_size: 16 #32
+
+
+# Auxiliary seg：`seg_supervision` 仅在 model: CustomUnet_att_ca（分割+回归双头）时生效。
+# Gaussian / MDM-only / WDM-only 三组消融请固定 model: CustomUnet_att_ca。
+# MK_UNet_S、ResNet 等仅回归头，会忽略 `seg_supervision`（训练中无辅助分割损失）。
+# CustomUnet / CustomUnet_no_attention 仍使用固定 clamp(gmdm+gwdm)，不受 `seg_supervision` 影响。
+#
+# （CustomUnet_att_ca）三组示例：
+#   MDM-only:     use_gmdm: True ; use_gwdm: False ; seg_supervision: gmdm
+#   WDM-only:     use_gmdm: False; use_gwdm: True  ; seg_supervision: gwdm
+#   Gaussian ctrl: use_gmdm: False; use_gwdm: False ; seg_supervision: gaussian
+use_gmdm: False
+use_gwdm: True
+seg_supervision: mdm_wdm
+
+#model: "CustomUnet_att_ca" # ViTRegression, SwinTransformer, SwinUNet, UTANet, MK_UNet_S, ResNet50, UNet, DenseNet121, AttUNet, UKAN, CustomUnet, CustomUnet_no_attention, CustomUnet_att_ca
+#model: "CustomUnet_no_attention"
+# Add Model...
+#model: "UKAN" #do
+#model: SwinUNet #do
+#model: UTANet #do
+# model: MK_UNet_S
+#result_path: "./paper_result/SKIN_Q"
+# result_path: "./paper_result/SKIN_Q_retrain_for_fig7"
+result_path: "./paper_result/SKIN_Q_SG_ablation"
+resume: True # Start training from checkpoints

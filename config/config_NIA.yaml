@@ -1,0 +1,52 @@
+#paths:
+#  json_folder: "/data1/SKIN_Q/03/label"
+#  image_folder: "/data1/SKIN_Q/03/image"
+#
+#paths:
+#  processed_dir: "/data1/NIA_face"
+#
+##  json_folder: "/home/cxx/Code/SKINDATA/SkinData/full_data/label"
+##  image_folder: "/home/cxx/Code/SKINDATA/SkinData/full_data/image"
+#
+#ids:
+#  train: [1,2,3,4,5,6,7,8,9,10]
+#  test: [0]
+#light_conditions:
+#  train: [1,2]
+#  test: [1, 2]
+#split_mode: "ratio"  # "id" 表示按照 "id" 划分，"ratio" 表示按比例划分
+#split_ratio: 0.8     # 当 split_mode 为 "ratio" 时生效
+#batch_size: 16 #32
+#use_gmdm: True
+#use_gwdm: True
+#
+#model: "CustomUnet_att_ca" # ResNet50, UNet, DenseNet121, AttUNet,CustomUnet,CustomUnet_no_attention,CustomUnet_att_ca
+#result_path: "./paper_result"
+#resume: True # Start training from checkpoints
+
+
+paths:
+  processed_dir: "/data_usb/Other_Dataset/NIA_face"
+batch_size: 16
+num_workers: 4
+split_ratio: 0.8
+use_gmdm: False
+use_gwdm: False
+
+# seg_supervision 仅 CustomUnet_att_ca（双头）时生效；消融：MDM/WDM-only/Gaussian 须设 model: CustomUnet_att_ca。
+# 其它 backbone 忽略；legacy CustomUnet* 仍为 clamp(gmdm+gwdm)。
+# mdm_wdm | gmdm | gwdm | gaussian | uniform
+seg_supervision: mdm_wdm
+
+face_parts: [5, 6]  # 只用左脸5、右脸6，可改成只用[5]或[6]
+
+model: CustomUnet_att_ca
+#model: "ResNet50" # ViTRegression, SwinTransformer, SwinUNet, UTANet, MK_UNet_S, ResNet50, UNet, DenseNet121, AttUNet, UKAN, CustomUnet, CustomUnet_no_attention, CustomUnet_att_ca
+# Add Model...
+#model: "UKAN" #do
+#model: SwinUNet # do
+#model: UTANet
+#model: MK_UNet_S
+
+result_path: "./paper_result/NIA_face_SG_ablation"
+resume: True # Start training from checkpoints
