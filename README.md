@@ -11,10 +11,10 @@ The **source code**, **pre-trained models** will be made publicly available **af
 
 We appreciate your patience and support.
 
-### The dataset download   
+### The dataset download    [Link](https://forms.gle/Df8r7Dxf9yanb95j7) 
 
-* FaceSkin-Q : [Link](https://drive.google.com/file/d/1Kt3tkw1-Iith-KgEy5da14mp_oYQT_ba/view?usp=sharing)  Decompression password: skinqskinq
-* NIA : [Link](https://drive.google.com/file/d/1x-4Vfy0ZTen-tWIpAkJEMwR-6tyhrhri/view?usp=drive_link) Decompression password: niania
+* FaceSkin-Q : Decompression password: skinqskinq
+* NIA :  Decompression password: niania
 
 
 ## 📄 Project Overview *(to be updated upon release)*
