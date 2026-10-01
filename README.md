@@ -1,6 +1,8 @@
 # Structural Guidance Enhances Attention Networks for Multi-Dimensional Facial Skin Quality Assessment
 
-<img width="413" height="253" alt="image" src="https://github.com/user-attachments/assets/c962b36e-3a88-42ff-b5ff-efe9d4290caf" />
+<div align="center">
+ <img width="413" height="253" alt="image" src="https://github.com/user-attachments/assets/c962b36e-3a88-42ff-b5ff-efe9d4290caf" />
+</div>
 
 This repository contains the official implementation of our work **“Structural guidance enhances attention networks for multi-dimensional facial skin quality assessment”** (submitted to *Scientific Reports*).
 The proposed framework integrates structural cues—pore and wrinkle features—with an attention-enhanced U-Net backbone (SGA-UNet) to estimate four continuous facial skin-quality attributes: **moisture, glossiness, sebum, and elasticity**.
