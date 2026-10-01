@@ -19,9 +19,9 @@ We appreciate your patience and support.
 * NIA :  Decompression password: niania
 
 
-## 📄 Project Overview *(to be updated upon release)*
+## 📄 Project Overview
 
-This repository will include:
+This repository include:
 
 * **SGA-UNet architecture**
 
@@ -49,7 +49,17 @@ This repository will include:
 
 ## 📚 Citation
 
-A formal citation entry will be provided once the manuscript is accepted.
+If you find this work useful, please cite:
+```bibtex
+@article{chu2026structural,
+  title   = {Structural guidance enhances attention networks for multi-dimensional facial skin quality assessment},
+  author  = {Chu, X. and Kim, C. and Bai, S. J. and Song, Y. and Sung, J. and Choi, Y.},
+  journal = {Scientific Reports},
+  year    = {2026},
+  doi     = {10.1038/s41598-026-65848-z},
+  url     = {https://doi.org/10.1038/s41598-026-65848-z}
+}
+```
 
 ## 📬 Contact
 
