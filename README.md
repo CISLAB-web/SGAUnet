@@ -29,8 +29,4 @@ If you find this work useful, please cite:
 }
 ```
 
-## 📬 Contact
-
-For questions or collaboration requests, please contact:
-📧 [chuxin@dankook.ac.kr](mailto:chuxin@dankook.ac.kr)
 
