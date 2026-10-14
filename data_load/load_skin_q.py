@@ -14,11 +14,11 @@ import torchvision.transforms.functional as TF
 
 def show_image_with_masks(rgb, gmdm=None, gwdm=None, title=""):
     """
-    显示原图和两个结构标签（gmdm, gwdm），每张图片一行三列。
-    参数:
-        rgb (Tensor): RGB 图像张量 [3, H, W]
-        gmdm (Tensor): GMDM 掩码图像张量 [1, H, W] 或 [3, H, W]
-        gwdm (Tensor): GWDM 掩码图像张量 [1, H, W] 或 [3, H, W]
+    Display the original RGB image and two structural masks (GMDM and GWDM) in a single row of three panels.
+    Args:
+        rgb (Tensor): RGB image tensor [3, H, W].
+        gmdm (Tensor): GMDM mask tensor [1, H, W] or [3, H, W].
+        gwdm (Tensor): GWDM mask tensor [1, H, W] or [3, H, W].
     """
     rgb_img = TF.to_pil_image(rgb.cpu())
     gmdm_img = TF.to_pil_image(gmdm.cpu()) if gmdm is not None else None
@@ -27,7 +27,7 @@ def show_image_with_masks(rgb, gmdm=None, gwdm=None, title=""):
     plt.figure(figsize=(12, 4))
     plt.suptitle(title, fontsize=14)
 
-    # RGB 原图
+    # RGB source image
     plt.subplot(1, 3, 1)
     plt.imshow(rgb_img)
     plt.title("RGB Image")
@@ -58,22 +58,22 @@ class SkinDataset(Dataset):
     def __init__(self, json_folder, image_folder, ids=None, light_conditions=None, transform=None ,use_gmdm=False, use_gwdm=False):
         self.json_folder = json_folder
         self.image_folder = image_folder
-        self.ids = ids if ids else []  # 如果没有传入 IDs，默认为空列表
+        self.ids = ids if ids else []  # Use an empty list when no IDs are provided
         # self.light_conditions = light_conditions
-        self.light_conditions = light_conditions if light_conditions else []  # 如果没有传入光照条件，默认为空列表
+        self.light_conditions = light_conditions if light_conditions else []  # Use an empty list when no lighting conditions are provided
         self.transform = transform
 
         self.use_gmdm = use_gmdm
         self.use_gwdm = use_gwdm
 
-        # 加载伪标签路径
+        # Set up pseudo-label directories
         self.gmdm_folder = None
         self.gwdm_folder = None
 
         self.mask_transform = transforms.Compose([
             transforms.Resize((256, 256)),
-            transforms.ToTensor(),  # 转为 [3, H, W] 且归一化为 [0, 1]
-            transforms.Lambda(lambda x: x[0:1, :, :])  # 提取第1通道 (R)，变为 [1, H, W]
+            transforms.ToTensor(),  # Convert to [3, H, W] and scale values to [0, 1]
+            transforms.Lambda(lambda x: x[0:1, :, :])  # Select the first (red) channel to obtain [1, H, W]
         ])
 
         if use_gmdm:
@@ -93,39 +93,39 @@ class SkinDataset(Dataset):
 
     def load_data(self):
         data = []
-        # os.listdir 顺序在 Linux 上未定义，会导致同一份数据每次构建 Dataset 顺序不同；
-        # 排序后顺序稳定，便于可视化/对比时按 group_id 或文件名对齐。
+        # os.listdir does not guarantee ordering on Linux, so dataset order may vary between runs;
+        # sorting ensures reproducible ordering for visualization and comparisons by group_id or filename.
         for filename in sorted(os.listdir(self.json_folder)):
             if filename.endswith('.json'):
                 json_file_path = os.path.join(self.json_folder, filename)
                 with open(json_file_path, 'r') as file:
                     json_data = json.load(file)
-                    # # 获取文件名
+                    ## Get the image filename
                     # image_file_name = os.path.basename(json_data["imagePath"])
                     # image_path = os.path.join(self.image_folder, image_file_name)
-                    # image_path = os.path.abspath(image_path.replace('\\', '/'))  # 修正路径分隔符
+                    # Normalize path separators
                     
-                    # 这里的linux 版本和window有所不同
+                    # Handle differences between Linux and Windows paths
                     image_path = os.path.join(self.image_folder, json_data['imagePath'].split('\\')[-1])
-                    image_path = os.path.abspath(image_path.replace('\\', '/'))  # 修正路径分隔
+                    image_path = os.path.abspath(image_path.replace('\\', '/'))  # Normalize path separators
 
                     if self.use_gmdm:
                         gmdm_path = os.path.join(self.gmdm_folder,json_data['imagePath'].split('\\')[-1])
-                        gmdm_path = os.path.abspath(gmdm_path.replace('\\', '/'))  # 修正路径分隔
+                        gmdm_path = os.path.abspath(gmdm_path.replace('\\', '/'))  # Normalize path separators
                     else:
                         gmdm_path = None
                     if self.use_gwdm:
                         gwdm_path = os.path.join(self.gwdm_folder,json_data['imagePath'].split('\\')[-1])
-                        gwdm_path = os.path.abspath(gwdm_path.replace('\\', '/'))  # 修正路径分隔
+                        gwdm_path = os.path.abspath(gwdm_path.replace('\\', '/'))  # Normalize path separators
                     else:
                         gwdm_path = None
                     
                     for shape in json_data["shapes"]:
                         # if shape["group_id"] in self.ids:
-                        # 如果 self.ids 为空，则不过滤 group_id；否则过滤符合条件的 group_id
+                        # If self.ids is empty, keep all group_ids; otherwise, filter by the specified IDs
                         if not self.ids or shape["group_id"] in self.ids:
                             try:
-                                # 解析description获取光照值
+                                # Parse the lighting condition from the description
                                 description = shape["description"].split(',')
                                 if len(description) != 3:
                                     self.errors.append(f"{json_file_path} description != 3: {shape['description']}")
@@ -135,9 +135,9 @@ class SkinDataset(Dataset):
                                 self.errors.append(f"{json_file_path} description value error: {shape['description']}")
                                 continue
 
-                            # 根据光照值进行分类
+                            # Filter samples by lighting condition
                             # if light_condition in self.light_conditions:
-                            # 如果 self.light_conditions 为空，则不过滤 light_condition；否则过滤符合条件的 light_condition
+                            # If self.light_conditions is empty, keep all conditions; otherwise, filter by the specified values
                             if not self.light_conditions or light_condition in self.light_conditions:
                                 data.append({
                                     "json_path": json_file_path,
@@ -184,9 +184,9 @@ class SkinDataset(Dataset):
         else:
             gwdm = None
 
-        # ========== 图像和结构标签统一旋转 ==========
+        # ========== Apply consistent rotation to images and structural masks ==========
         image = np.array(image)
-        # image = np.rot90(image, k=-1)  # 逆时针旋转90度
+        # Rotate 90 degrees counterclockwise
         image = Image.fromarray(image)
 
         if gmdm is not None:
@@ -199,18 +199,18 @@ class SkinDataset(Dataset):
             # gwdm = np.rot90(gwdm, k=-1)
             gwdm = Image.fromarray(gwdm)
 
-        # 获取裁剪框的左、上、右、下坐标
+        # Get the left, top, right, and bottom coordinates of the crop box
         points = item["points"]
         left = min(points[0][0], points[1][0])
         top = min(points[0][1], points[1][1])
         right = max(points[0][0], points[1][0])
         bottom = max(points[0][1], points[1][1])
         cropped_image = image.crop((left, top, right, bottom))
-        # 可选裁剪结构标签（如果要输入网络）
+        # Optionally crop the structural masks for network input
         gmdm = gmdm.crop((left, top, right, bottom)) if gmdm else None
         gwdm = gwdm.crop((left, top, right, bottom)) if gwdm else None
 
-        # 图像变换
+        # Apply image transformations
         if self.transform:
             cropped_image = self.transform(cropped_image)
             if gmdm is not None:
@@ -218,11 +218,11 @@ class SkinDataset(Dataset):
             if gwdm is not None:
                 gwdm = self.mask_transform(gwdm)
 
-        # 解析label 的值获取水分，油分等信息
+        # Parse the label to extract moisture, oil, and other target values
         label = item["label"].split(',')
         if len(label) != 4:
             self.errors.append(f"{item['json_path']} label != 4: {item['label']}")
-            white, water, oil, elastic = 0.0, 0.0, 0.0, 0.0  # 设置默认值或处理错误
+            white, water, oil, elastic = 0.0, 0.0, 0.0, 0.0  # Use default values or handle invalid labels
         else:
             try:
                 white = float(label[0])
@@ -231,22 +231,22 @@ class SkinDataset(Dataset):
                 elastic = float(label[3])
             except ValueError:
                 self.errors.append(f"{item['json_path']} label value error: {item['label']}")
-                white, water, oil, elastic = 0.0, 0.0, 0.0, 0.0  # 设置默认值或处理错误
+                white, water, oil, elastic = 0.0, 0.0, 0.0, 0.0  # Use default values or handle invalid labels
 
         targets = torch.tensor([white, water, oil, elastic], dtype=torch.float32)
 
 
 
         # return cropped_image, targets, os.path.basename(item["image_path"]), item["description"]
-        # === 返回结构 ===
-        dummy_mask = torch.zeros((1, 256, 256))  # 或用 torch.full((1, 256, 256), -1.0)
+        # === Returned sample structure ===
+        dummy_mask = torch.zeros((1, 256, 256))  # Alternatively, use torch.full((1, 256, 256), -1.0)
         return {
-            "image": cropped_image,  # 预处理后的图像
-            "targets": targets,  # 标签张量
+            "image": cropped_image,  # Preprocessed image
+            "targets": targets,  # Target tensor
             "filename": os.path.basename(item["image_path"]),
-            "description": item["description"],  # 光照描述
-            "gmdm": gmdm if gmdm is not None else dummy_mask,  # 结构伪标签（可选）
-            "gwdm": gwdm if gwdm is not None else dummy_mask  # 结构伪标签（可选）
+            "description": item["description"],  # Lighting condition description
+            "gmdm": gmdm if gmdm is not None else dummy_mask,  # Optional structural pseudo-label
+            "gwdm": gwdm if gwdm is not None else dummy_mask  # Optional structural pseudo-label
         }
 
 class SkinDataLoader:
@@ -254,21 +254,21 @@ class SkinDataLoader:
         with open(config_path, 'r') as file:
             self.config = yaml.safe_load(file)
 
-        # 基础路径
+        # Base paths
         self.json_folder_path = self.config['paths']['json_folder']
         self.image_folder_path = self.config['paths']['image_folder']
         self.batch_size = self.config['batch_size']
-        self.num_workers = self.config.get('num_workers', 4)  # 默认使用4个线程
+        self.num_workers = self.config.get('num_workers', 4)  # Use four workers by default
 
-        # 增加分割模式支持
-        self.split_mode = self.config.get('split_mode', 'id')  # 默认使用 ID 划分
-        self.split_ratio = self.config.get('split_ratio', 0.8)  # 比例划分时的默认比例
+        # Support multiple dataset splitting modes
+        self.split_mode = self.config.get('split_mode', 'id')  # Use ID-based splitting by default
+        self.split_ratio = self.config.get('split_ratio', 0.8)  # Default training ratio for ratio-based splitting
 
-        # 判断是不是加载伪标签
-        self.use_gmdm = self.config.get('use_gmdm', False) # 默认不加载
-        self.use_gwdm = self.config.get('use_gwdm', False) # 默认不加载
+        # Configure pseudo-label loading
+        self.use_gmdm = self.config.get('use_gmdm', False) # Disabled by default
+        self.use_gwdm = self.config.get('use_gwdm', False) # Disabled by default
 
-        # 数据增强与预处理
+        # Data augmentation and preprocessing
         self.val_transform = transforms.Compose([
             transforms.Resize((256, 256)),
             transforms.ToTensor(),
@@ -291,7 +291,7 @@ class SkinDataLoader:
                 transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
             ])
 
-        # 根据分割模式初始化数据集
+        # Initialize datasets according to the splitting mode
         if self.split_mode == "id":
             self.train_ids = self.config['ids']['train']
             self.test_ids = self.config['ids']['test']
@@ -317,7 +317,7 @@ class SkinDataLoader:
                 use_gwdm=self.use_gwdm
             )
         elif self.split_mode == "ratio":
-            # 按比例划分数据集
+            # Split the dataset by the specified ratio
             full_dataset = SkinDataset(
                 self.json_folder_path,
                 self.image_folder_path,
@@ -329,12 +329,12 @@ class SkinDataLoader:
         else:
             raise ValueError("Invalid split_mode! Must be 'id' or 'ratio'.")
 
-        # 数据加载器
+        # Data loaders
         self.train_loader = DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
         self.test_loader = DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
 
     def split_dataset(self, dataset):
-        """按比例划分数据集"""
+        """Split the dataset according to the configured ratio."""
         total_size = len(dataset)
         train_size = int(total_size * self.split_ratio)
         test_size = total_size - train_size
@@ -370,7 +370,7 @@ class SkinDataLoader:
 
             axes[row][col].set_title(label_info, fontsize=8)
 
-            # 可选可视化结构标签：红色边框为 gmdm，绿色边框为 gwdm
+            # Optionally visualize structural masks: red for GMDM and green for GWDM
             if gmdms is not None and gmdms[i] is not None:
                 g = gmdms[i][0].cpu().numpy()
                 axes[row][col].imshow(g, cmap='Reds', alpha=0.2)
@@ -378,7 +378,7 @@ class SkinDataLoader:
                 w = gwdms[i][0].cpu().numpy()
                 axes[row][col].imshow(w, cmap='Greens', alpha=0.2)
 
-        # 关闭多余的子图
+        # Hide unused subplots
         for j in range(batch_size, grid_size * grid_size):
             row = j // grid_size
             col = j % grid_size
@@ -392,7 +392,7 @@ class SkinDataLoader:
         loader = self.train_loader if show == "train" else self.test_loader
 
         for batch in loader:
-            # 将 batch 字典展开为独立项
+            # Unpack the batch dictionary into individual fields
             images = batch["image"]
             targets = batch["targets"]
             filenames = batch["filename"]
@@ -403,7 +403,7 @@ class SkinDataLoader:
             print(f"Batch of images shape: {images.shape}")
             print(f"Batch of targets shape: {targets.shape}")
             self.show_batch(images, targets, filenames, descriptions, gmdms, gwdms)
-            # for i in range(min(len(images), 4)):  # 每批最多展示 8 个
+            # Display up to 8 samples per batch
             #     show_image_with_masks(
             #         rgb=images[i],
             #         gmdm=gmdms[i] if gmdms is not None else None,
@@ -415,7 +415,7 @@ class SkinDataLoader:
 
         print(f"Total number of batches in {show}_loader: {total_batches}")
     def get_statistics(self, dataset):
-        """统计数据集的 ID 和光照条件分布"""
+        """Report the distribution of IDs and lighting conditions in the dataset."""
         id_counts = defaultdict(int)
         light_condition_counts = defaultdict(int)
         if isinstance(dataset, torch.utils.data.Subset):
@@ -439,12 +439,12 @@ class SkinDataLoader:
         print("\nLight condition counts:")
         for light_condition, count in light_condition_counts.items():
             print(f"Light Condition: {light_condition}, Count: {count}")
-        # 打印统计信息
-        print(f"Total samples: {len(indices)}")  # 打印数据总数
+        # Print summary statistics
+        print(f"Total samples: {len(indices)}")  # Print the total number of samples
 
 
 
-# # 使用示例
+## Usage example
 if __name__ == "__main__":
     data_loader = SkinDataLoader("../config/config_skin_Q.yaml")
     data_loader.display_batches("test")
