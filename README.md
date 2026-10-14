@@ -14,7 +14,8 @@ The proposed framework integrates structural cues—pore and wrinkle features—
 * FaceSkin-Q : Decompression password: skinqskinq
 * NIA :  Decompression password: niania
 
-
+> **Note:** Some annotations in the FaceSkin-Q dataset contain missing values or formatting errors. Please refer to the data loading logic in `./data_load/load_skin_q.py` to inspect and handle these cases.
+  
 ## 📚 Citation
 
 If you find this work useful, please cite:
